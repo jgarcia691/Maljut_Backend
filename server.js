@@ -29,10 +29,19 @@ app.use(express.static(join(__dirname, 'public')));
 // Rutas de la API
 app.use('/api', apiRoutes);
 
-// Ruta de prueba
+// Ruta para la raíz
 app.get('/', (req, res) => {
   res.json({
     message: 'Backend Maljut funcionando correctamente',
+    status: 'OK',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Ruta para /api
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Bienvenido a la API de MaljutBot',
     status: 'OK',
     timestamp: new Date().toISOString()
   });
