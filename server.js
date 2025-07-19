@@ -56,10 +56,10 @@ app.use('*', (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor iniciado en el puerto ${PORT}`);
-  console.log(`📡 API disponible en: http://localhost:${PORT}/api`);
-  console.log(`🌐 Servidor web en: http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`🚀 Servidor iniciado en el puerto ${PORT}`);
+//   console.log(`📡 API disponible en: http://localhost:${PORT}/api`);
+//   console.log(`🌐 Servidor web en: http://localhost:${PORT}`);
+// });
 
 export default app;
