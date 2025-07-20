@@ -132,6 +132,35 @@ class MaljutController {
     }
 
     /**
+     * Endpoint de diagnóstico para verificar configuración
+     * GET /api/diagnostic
+     */
+    async diagnostic(req, res) {
+        try {
+            const diagnostic = {
+                apiKeyConfigured: !!process.env.GOOGLE_API_KEY,
+                apiKeyLength: process.env.GOOGLE_API_KEY ? process.env.GOOGLE_API_KEY.length : 0,
+                apiKeyPrefix: process.env.GOOGLE_API_KEY ? process.env.GOOGLE_API_KEY.substring(0, 10) + '...' : 'No configurada',
+                environment: process.env.NODE_ENV || 'development',
+                timestamp: new Date().toISOString()
+            };
+
+            res.json({
+                success: true,
+                data: diagnostic
+            });
+
+        } catch (error) {
+            console.error('Error en diagnostic controller:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Error interno del servidor',
+                message: error.message
+            });
+        }
+    }
+
+    /**
      * Endpoint para manejar errores 404 en la API
      */
     async notFound(req, res) {
@@ -143,7 +172,8 @@ class MaljutController {
                 'POST /api/chat - Consultar al asistente virtual',
                 'GET /api/info - Información básica de Maljut Pizzas',
                 'GET /api/health - Estado del servidor',
-                'GET /api/stats - Estadísticas básicas'
+                'GET /api/stats - Estadísticas básicas',
+                'GET /api/diagnostic - Diagnóstico de configuración'
             ]
         });
     }

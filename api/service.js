@@ -2,8 +2,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 dotenv.config();
 
+// Validar que la API key esté configurada
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+
+if (!GOOGLE_API_KEY) {
+    console.error('❌ ERROR: GOOGLE_API_KEY no está configurada en las variables de entorno');
+    throw new Error('GOOGLE_API_KEY no está configurada. Por favor, configura la variable de entorno GOOGLE_API_KEY en tu plataforma de despliegue.');
+}
+
 // Configurar Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 
 // Prompt del sistema para el asistente virtual de Maljut Pizzas
 const SYSTEM_PROMPT = `Eres MaljutBot, el asistente virtual oficial de Maljut Pizzas. Tu función es ayudar a los clientes con información sobre nuestros productos, servicios y resolver sus dudas.
@@ -35,6 +43,11 @@ IMPORTANTE: Si un cliente pregunta algo que no puedes responder con la informaci
  */
 async function consultarAsistente(userMessage) {
     try {
+        // Verificar que la API key esté disponible
+        if (!GOOGLE_API_KEY) {
+            throw new Error('API key de Google no configurada');
+        }
+
         // Obtener el modelo Gemini
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -51,14 +64,16 @@ async function consultarAsistente(userMessage) {
         console.error('Error al consultar el asistente virtual:', error);
         
         // Manejo específico de errores de la API
-        if (error.message && error.message.includes('API_KEY')) {
-            throw new Error('Error de configuración: API key de Google inválida. Por favor, contacta al administrador.');
+        if (error.message && error.message.includes('API key')) {
+            throw new Error('Error de configuración: API key de Google inválida o no configurada. Por favor, verifica la configuración en Vercel.');
         } else if (error.message && error.message.includes('quota')) {
             throw new Error('Error de configuración: Cuota de API excedida. Por favor, contacta al administrador.');
         } else if (error.message && error.message.includes('network')) {
             throw new Error('Error de conexión con el servicio de IA. Por favor, intenta de nuevo más tarde.');
+        } else if (error.message && error.message.includes('permission')) {
+            throw new Error('Error de permisos: La API key no tiene permisos para acceder al servicio. Verifica la configuración.');
         } else {
-            throw new Error('No se pudo procesar tu consulta en este momento. Por favor, intenta de nuevo más tarde.');
+            throw new Error(`Error del servicio: ${error.message || 'No se pudo procesar tu consulta en este momento. Por favor, intenta de nuevo más tarde.'}`);
         }
     }
 }

@@ -56,6 +56,11 @@ router.get('/', (req, res) => {
                 method: 'GET',
                 path: '/api/stats',
                 description: 'Obtener estadísticas básicas del servicio'
+            },
+            diagnostic: {
+                method: 'GET',
+                path: '/api/diagnostic',
+                description: 'Diagnóstico de configuración del servidor'
             }
         },
         timestamp: new Date().toISOString()
@@ -85,6 +90,12 @@ router.get('/health', maljutController.health);
  * GET /api/stats
  */
 router.get('/stats', maljutController.getStats);
+
+/**
+ * Endpoint de diagnóstico para verificar configuración
+ * GET /api/diagnostic
+ */
+router.get('/diagnostic', maljutController.diagnostic);
 
 /**
  * Middleware para manejar rutas no encontradas en la API
